@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>main.html</title>
+	
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+
+	<style type="text/css">	 
+		 
+		 .hyuna{
+		 	position: absolute;
+		 	z-index: 0;
+		 	padding: 1%;
+		 	top: 30%;
+		 }
+
+		 #div0{
+		 	left: 2%;
+		 	right: 82%;
+		 }
+		 #div1{
+		 	left: 22%;
+		 	right: 62%;
+		 }
+		 #div2{
+		 	left: 42%;
+		 	right: 42%;
+		 }
+		 #div3{
+		 	left: 62%;
+		 	right: 22%;
+		 }
+		 #div4{
+		 	left: 82%;
+		 	right: 2%;
+		 }
+	</style>
+	
+	
+	<script type="text/javascript">
+		//音乐
+		var musics = ["musics/hyuna-1.mp3","musics/hyuna-2.mp3","musics/hyuna-3.mp3","musics/hyuna-4.mp3","musics/hyuna-5.mp3","musics/hyuna-6.mp3","musics/hyuna-7.mp3","musics/hyuna-8.mp3","musics/hyuna-9.mp3"];
+		//将需要显示的图片封装到数组中
+		var imgs = ["images/hyuna-1.jpg","images/hyuna-2.jpg","images/hyuna-3.jpg","images/hyuna-4.jpg","images/hyuna-5.jpg","images/hyuna-6.jpg","images/hyuna-7.jpg","images/hyuna-8.jpg","images/hyuna-9.jpg"];
+	
+		//记录点击的次数
+		var downTimes = 0;
+		//页面上显示几张图片(为后期改变页面图片做准备，这个数必须比数组中的图片个数少，不然左右点击建（leftMove()， rightMove()）无法使用)
+		var showManyImgs = 5;
+		//需要知道现在播放的是那一首
+		var whichPlay = 0;
+		//点击图片时，图片变大并且播放音乐
+		function playMusic(picID){
+		
+					//将图片都还原,放大那个还原那个
+					var pictureLast = document.getElementById("picture"+whichPlay);	
+					//还原图片大小
+					pictureLast.setAttribute("style", "transform:scale(1)");
+				
+				for (whichPlay = 0; whichPlay < showManyImgs; whichPlay++) {
+					var music = document.getElementById("musicID");
+					var picture = document.getElementById("picture"+whichPlay);
+					//还原图片大小==>break;后面的图片将无法恢复原来大小
+					//e.g.点击第三个后，第三个放大。然后又点击点二个，代码执行到第二个就结束了，第三个就不会还原了。
+					//picture.setAttribute("style", "transform:scale(1)");
+					//如何使当前被点击的图片，把图片放大。
+					if ("picture"+whichPlay == picID) {
+						//首先获取点击的图片和音乐
+						var pic = document.getElementById(picID);
+						//设置被点击图片的大小
+						//图片按中心点缩放 (图片的大小不变，只是显示缩放)
+						pic.setAttribute("style", "transform:scale(1.2)");
+						//播放图片对应的音乐	
+						music.setAttribute("src", musics[whichPlay+downTimes]);
+						//alert(whichPlay+downTimes);
+						break;
+					}				
+				} 
+			}
+		
+		//将图片按预定显示
+		function layout(downTimes){
+			//记录已经加载了几张图片
+			var loadMangImgs = 0;
+			//往相应位置里面插入图片
+			for (var int = 0; int < showManyImgs; int++) {
+				//获取当前的元素
+				var picture = document.getElementById("picture"+int);
+				//向当前元素中加入图片
+				picture.setAttribute("src", imgs[int+downTimes]);
+				loadMangImgs++;
+				/* 
+				//后期如果一个页面显示更多的话，需要根据这个想法继续想下去。
+				//另外，如果怎么加更多，需要改变CSS的样式，可能要把CSS中的属性直接加到元素的style中，从而让JavaScript代码更好的控制样式
+				if (loadMangImgs >= 5) {
+					for (var i = 5; i < showManyImgs; i++) {
+						var div = document.createElement("div");
+						div.setAttribute("align", "'center'");
+						div.setAttribute("class", "'hyuna'");
+						div.setAttribute("style", "'left: 82%;right: 2%;background-color: blue;'");
+						//获取<body>将创建好的div加进去
+						var body = document.getElementById("bodyID");
+						body.appendChild(div);
+						
+					}
+				}  */
+				
+			}
+		}
+		
+		//点击后，图片向左移动一个，并且换歌曲。
+		function leftMove() {
+				var music = document.getElementById("musicID");
+				if (downTimes < imgs.length-showManyImgs) {
+					downTimes++;
+					//必须放在里面，如果放在外面点击后虽然不移动，但是点击次数还会增加
+					layout(downTimes);
+					//切换歌曲
+					music.setAttribute("src", musics[whichPlay+downTimes]);
+						//alert(whichPlay+downTimes);
+				}
+			}
+			//如果数组已经到了最后一个，则停止这个行为
+		
+		//点击后，图片向右移动一个，并且换歌曲。
+		function rightMove() {
+					var music = document.getElementById("musicID");
+				if (downTimes > 0) {
+					downTimes--;
+					layout(downTimes);
+					music.setAttribute("src", musics[whichPlay+downTimes]);
+					//	alert(whichPlay+downTimes);
+				}
+				//切换歌曲
+		}
+		
+	</script>
+  </head>
+  
+  <body onload="layout(0)" id="bodyID">
+
+  	
+  	<!-- z-index:表示层叠顺序，数字越大越在前 -->
+	<div style="position: absolute; width:100%; height:100%; z-index: -1;">
+		<img style="filter:alpha(opacity=50); -moz-opacity:0.5; -khtml-opacity: 0.5; opacity: 0.5;" width="100%" height="100%" src="images/bg.gif">
+	</div>	  	
+
+	<audio id="musicID" hidden="hidden" autoplay="autoplay" loop="loop">Sorry,your browser doesn't support</audio>  
+
+  	<img src="images/leftArrow.png" id="leftArrowId" style="position: absolute;top: 20%; left: 30%; right: 70%" onclick="leftMove()">
+	<img src="images/rightArrow.png" id="rightArrowId" style="position: absolute;top: 20%; left: 70%; right: 30%" onclick="rightMove()"> 
+
+	<div id="div0" class="hyuna" align="center">
+		<img class="hyunaImg" id="picture0" onclick="playMusic('picture0')" width="80%">
+	</div>	 
+	
+	<div id="div1" class="hyuna" align="center">
+		<img class="hyunaImg" id="picture1" onclick="playMusic('picture1')" width="80%">
+	</div>	
+	
+	<div id="div2" class="hyuna" align="center">
+		<img class="hyunaImg" id="picture2" onclick="playMusic('picture2')" width="80%">
+	</div>	
+	
+	<div id="div3" class="hyuna" align="center">
+		<img class="hyunaImg" id="picture3" onclick="playMusic('picture3')" width="80%">
+	</div>	
+	
+	<div id="div4" class="hyuna" align="center">
+		<img class="hyunaImg" id="picture4" onclick="playMusic('picture4')" width="80%">
+	</div>	
+
+  </body>
+</html>
